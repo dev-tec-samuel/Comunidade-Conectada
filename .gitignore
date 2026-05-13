@@ -1,0 +1,48 @@
+--- DEPENDÊNCIAS (Muito pesadas) ---
+
+Ignora node_modules em qualquer nível do projeto
+
+node_modules/
+**/node_modules/
+
+--- SEGURANÇA (Arquivos Sensíveis) ---
+
+Ignora o arquivo .env na raiz ou dentro de qualquer pasta (como o seu backend/.env)
+
+.env
+**/.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+--- UPLOADS E MÍDIA ---
+
+Ignora as imagens enviadas para o backend para não lotar o GitHub
+
+backend/uploads/
+uploads/
+
+--- COMPILAÇÃO / BUILD ---
+
+Ignora as pastas de saída do React/Vite
+
+frontend/dist/
+dist/
+dist-ssr/
+*.local
+
+--- LOGS ---
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+--- SISTEMA E EDITORES ---
+
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
