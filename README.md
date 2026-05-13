@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Church.png" alt="Church" width="50" height="50" /><br>
+  <img src="https://github.com/dev-tec-samuel/Comunidade-Conectada/blob/main/frontend/public/icon.png" alt="Church" width="50" height="50" /><br>
   Comunidade Conectada
 </h1>
 
