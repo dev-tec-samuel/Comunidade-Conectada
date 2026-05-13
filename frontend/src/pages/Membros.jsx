@@ -6,12 +6,13 @@ export default function Membros() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState('add');
   const [membros, setMembros] = useState([]);
+  const [termoBusca, setTermoBusca] = useState('');
   const [loading, setLoading] = useState(true);
-  
+
   const [selectedMembro, setSelectedMembro] = useState(null);
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [loadingMov, setLoadingMov] = useState(false);
-  
+
   const [ministerios, setMinisterios] = useState([]);
   const [funcoes, setFuncoes] = useState([]); // NOVO ESTADO
 
@@ -47,6 +48,15 @@ export default function Membros() {
     fetchDados();
   }, []);
 
+  const membrosFiltrados = membros.filter((membro) => {
+    const busca = termoBusca.toLowerCase();
+
+    const nome = membro.nome ? membro.nome.toLowerCase() : '';
+    const ministerio = membro.ministerio ? membro.ministerio.toLowerCase() : '';
+
+    return nome.includes(busca) || ministerio.includes(busca);
+  });
+
   const openModal = (type, membro = null) => {
     setModalType(type);
     setSelectedMembro(membro);
@@ -67,7 +77,7 @@ export default function Membros() {
     } else if (type === 'movimentacoes') {
       fetchMovimentacoes(membro.id);
     }
-    
+
     setModalOpen(true);
   };
 
@@ -92,11 +102,11 @@ export default function Membros() {
 
   const handleSave = (e) => {
     e.preventDefault();
-    
-    const url = modalType === 'add' 
-      ? 'http://localhost:3001/api/membros' 
+
+    const url = modalType === 'add'
+      ? 'http://localhost:3001/api/membros'
       : `http://localhost:3001/api/membros/${selectedMembro.id}`;
-      
+
     const method = modalType === 'add' ? 'POST' : 'PUT';
 
     fetch(url, {
@@ -104,27 +114,36 @@ export default function Membros() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
     })
-    .then(res => {
-      if (!res.ok) throw new Error("Erro na requisição");
-      return res.json();
-    })
-    .then(() => {
-      alert(`Membro ${modalType === 'add' ? 'cadastrado' : 'atualizado'} com sucesso!`);
-      setModalOpen(false);
-      fetchDados();
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Erro ao salvar os dados.");
-    });
+      .then(res => {
+        if (!res.ok) throw new Error("Erro na requisição");
+        return res.json();
+      })
+      .then(() => {
+        alert(`Membro ${modalType === 'add' ? 'cadastrado' : 'atualizado'} com sucesso!`);
+        setModalOpen(false);
+        fetchDados();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Erro ao salvar os dados.");
+      });
   };
+
 
   return (
     <div className="animate-in fade-in duration-500">
       <div className="flex justify-between items-center mb-6">
         <div className="relative w-full max-w-md">
-          <input type="text" className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" placeholder="Buscar membro..." />
-          <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Buscar por nome ou ministério..."
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none w-full"
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value)}
+            />
+          </div>
         </div>
         <button onClick={() => openModal('add')} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-5 rounded-xl flex items-center shadow-lg shadow-orange-200 transition-all active:scale-95">
           <Plus className="w-5 h-5 mr-2" /> Novo Membro
@@ -133,7 +152,7 @@ export default function Membros() {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         {loading ? (
-           <div className="p-8 text-center text-gray-500">Carregando dados do banco...</div>
+          <div className="p-8 text-center text-gray-500">Carregando dados do banco...</div>
         ) : (
           <table className="w-full table-auto">
             <thead className="bg-gray-50 border-b border-gray-100">
@@ -144,21 +163,29 @@ export default function Membros() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {(membros || []).map(m => (
-                <tr key={m.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-800">{m.nome}</td>
-                  <td className="px-6 py-4 text-gray-500">{m.telefone || 'N/A'}</td>
-                  <td className="px-6 py-4">
-                    <span className="text-gray-800 font-medium">{m.ministerio || 'Nenhum'}</span>
-                    <span className="text-gray-400 text-xs block">{m.funcao_nome || 'Sem função'}</span>
-                  </td>
-                  <td className="px-6 py-4 space-x-2">
-                    <button onClick={() => openModal('view', m)} title="Visualizar" className="text-blue-500 hover:text-blue-700 p-1"><Eye className="w-5 h-5" /></button>
-                    <button onClick={() => openModal('edit', m)} title="Editar" className="text-green-500 hover:text-green-700 p-1"><Edit className="w-5 h-5" /></button>
-                    <button onClick={() => openModal('movimentacoes', m)} title="Ver Movimentações" className="text-purple-500 hover:text-purple-700 p-1"><Activity className="w-5 h-5" /></button>
+              {membrosFiltrados.length > 0 ? (
+                membrosFiltrados.map(m => (
+                  <tr key={m.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-medium text-gray-800">{m.nome}</td>
+                    <td className="px-6 py-4 text-gray-500">{m.telefone || 'N/A'}</td>
+                    <td className="px-6 py-4">
+                      <span className="text-gray-800 font-medium">{m.ministerio || 'Nenhum'}</span>
+                      <span className="text-gray-400 text-xs block">{m.funcao_nome || 'Sem função'}</span>
+                    </td>
+                    <td className="px-6 py-4 space-x-2">
+                      <button onClick={() => openModal('view', m)} title="Visualizar" className="text-blue-500 hover:text-blue-700 p-1"><Eye className="w-5 h-5" /></button>
+                      <button onClick={() => openModal('edit', m)} title="Editar" className="text-green-500 hover:text-green-700 p-1"><Edit className="w-5 h-5" /></button>
+                      <button onClick={() => openModal('movimentacoes', m)} title="Ver Movimentações" className="text-purple-500 hover:text-purple-700 p-1"><Activity className="w-5 h-5" /></button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="px-6 py-12 text-center text-gray-400 font-medium">
+                    Nenhum membro encontrado com "{termoBusca}".
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         )}
@@ -189,16 +216,16 @@ export default function Membros() {
             <div>
               <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Informações Pessoais</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label className="block text-sm font-medium text-gray-600 mb-1">Nome Completo</label><input type="text" name="nome" value={formData.nome} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" disabled={modalType === 'view'} required/></div>
+                <div><label className="block text-sm font-medium text-gray-600 mb-1">Nome Completo</label><input type="text" name="nome" value={formData.nome} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" disabled={modalType === 'view'} required /></div>
                 <div><label className="block text-sm font-medium text-gray-600 mb-1">Data de Nascimento</label><input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none" disabled={modalType === 'view'} /></div>
-                <div><label className="block text-sm font-medium text-gray-600 mb-1">Telefone</label><input type="text" name="telefone" value={formData.telefone} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none" disabled={modalType === 'view'}/></div>
-                <div><label className="block text-sm font-medium text-gray-600 mb-1">E-mail</label><input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none" disabled={modalType === 'view'}/></div>
+                <div><label className="block text-sm font-medium text-gray-600 mb-1">Telefone</label><input type="text" name="telefone" value={formData.telefone} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none" disabled={modalType === 'view'} /></div>
+                <div><label className="block text-sm font-medium text-gray-600 mb-1">E-mail</label><input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none" disabled={modalType === 'view'} /></div>
               </div>
             </div>
             <div>
               <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 pt-4 border-t">Informações Ministeriais</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div><label className="block text-sm font-medium text-gray-600 mb-1">Data de Batismo</label><input type="date" name="data_batismo" value={formData.data_batismo} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none" disabled={modalType === 'view'}/></div>
+                <div><label className="block text-sm font-medium text-gray-600 mb-1">Data de Batismo</label><input type="date" name="data_batismo" value={formData.data_batismo} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none" disabled={modalType === 'view'} /></div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Ministério Principal</label>
                   <select name="id_ministerio_principal" value={formData.id_ministerio_principal} onChange={handleInputChange} className="w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" disabled={modalType === 'view'}>
