@@ -1,13 +1,9 @@
 --- DEPENDÊNCIAS (Muito pesadas) ---
 
-Ignora node_modules em qualquer nível do projeto
-
 node_modules/
 **/node_modules/
 
 --- SEGURANÇA (Arquivos Sensíveis) ---
-
-Ignora o arquivo .env na raiz ou dentro de qualquer pasta (como o seu backend/.env)
 
 .env
 **/.env
@@ -18,14 +14,10 @@ Ignora o arquivo .env na raiz ou dentro de qualquer pasta (como o seu backend/.e
 
 --- UPLOADS E MÍDIA ---
 
-Ignora as imagens enviadas para o backend para não lotar o GitHub
-
 backend/uploads/
 uploads/
 
 --- COMPILAÇÃO / BUILD ---
-
-Ignora as pastas de saída do React/Vite
 
 frontend/dist/
 dist/
