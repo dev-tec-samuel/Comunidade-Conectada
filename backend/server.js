@@ -10,10 +10,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Permite o acesso público à pasta de uploads para carregar as imagens no frontend
+// ACESSO PÚBLICO PRA PASTA DAS IMGS PROD FRONT
 app.use('/uploads', express.static('uploads'));
 
-// Configuração do Multer para guardar as imagens
+// CONFIG DO MULTER
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/capas/')
@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Configuração do Banco de Dados
+// CONFIG DO DB
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -57,7 +57,7 @@ app.get('/api/aniversariantes', async (req, res) => {
   }
 });
 
-// 1. BUSCAR MEMBROS (Agora traz o nome da função também)
+// GET MEMBROS
 app.get('/api/membros', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -74,7 +74,7 @@ app.get('/api/membros', async (req, res) => {
   }
 });
 
-// 2. CRIAR MEMBRO (Agora salva a função no banco)
+// POST MEMBRO
 app.post('/api/membros', async (req, res) => {
   const { nome, telefone, email, data_nascimento, data_batismo, id_ministerio_principal, id_funcao_principal } = req.body;
   try {
@@ -89,7 +89,7 @@ app.post('/api/membros', async (req, res) => {
   }
 });
 
-// 3. EDITAR MEMBRO (Agora atualiza a função no banco)
+// EDIT MEMBRO
 app.put('/api/membros/:id', async (req, res) => {
   const { id } = req.params;
   const { nome, telefone, email, data_nascimento, data_batismo, id_ministerio_principal, id_funcao_principal } = req.body;
@@ -186,11 +186,8 @@ app.post('/api/escalas', async (req, res) => {
   
   try {
     await client.query('BEGIN'); 
-    
-    // Limpa a escala antiga do evento
     await client.query('DELETE FROM ESCALAS WHERE id_evento = $1', [id_evento]);
     
-    // Insere os novos membros com suas respectivas funções
     for (const item of escalas) {
       await client.query(
         `INSERT INTO ESCALAS (id_evento, id_membro, id_funcao) VALUES ($1, $2, $3)`,
@@ -256,11 +253,9 @@ app.get('/api/financeiro/grafico/entradas', async (req, res) => {
 
 app.get('/api/financeiro/resumo', async (req, res) => {
   try {
-    // 1. Busca o resumo do mês atual (da View que já criamos)
     const mesResult = await pool.query('SELECT * FROM VW_RESUMO_FINANCEIRO_MES');
     const mes = mesResult.rows[0] || { total_entradas: 0, total_saidas: 0, saldo_atual: 0 };
 
-    // 2. Calcula o saldo GERAL (soma de todas as entradas menos todas as saídas de todos os tempos)
     const geralResult = await pool.query(`
       SELECT 
         COALESCE(SUM(CASE WHEN C.TIPO = 'Entrada' THEN F.VALOR ELSE -F.VALOR END), 0) AS saldo_geral
@@ -332,7 +327,7 @@ app.post('/api/eventos', upload.single('capa'), async (req, res) => {
   const { titulo, descricao, data_inicio, local, id_categoria, id_responsavel, destaque_mural } = req.body;
   
   const imagem_capa_url = req.file ? `http://localhost:3001/uploads/capas/${req.file.filename}` : null;
-  const isDestaque = destaque_mural === 'true' || destaque_mural === true; // Garante que é booleano
+  const isDestaque = destaque_mural === 'true' || destaque_mural === true;
 
   try {
     const result = await pool.query(
