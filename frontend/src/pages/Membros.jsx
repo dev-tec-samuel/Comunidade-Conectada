@@ -14,7 +14,7 @@ export default function Membros() {
   const [loadingMov, setLoadingMov] = useState(false);
 
   const [ministerios, setMinisterios] = useState([]);
-  const [funcoes, setFuncoes] = useState([]); // NOVO ESTADO
+  const [funcoes, setFuncoes] = useState([]);
 
   const initialFormState = {
     nome: '',
@@ -23,7 +23,7 @@ export default function Membros() {
     data_nascimento: '',
     data_batismo: '',
     id_ministerio_principal: '',
-    id_funcao_principal: '' // NOVO CAMPO
+    id_funcao_principal: ''
   };
   const [formData, setFormData] = useState(initialFormState);
 
@@ -32,7 +32,7 @@ export default function Membros() {
     Promise.all([
       fetch('http://localhost:3001/api/membros').then(res => res.ok ? res.json() : []),
       fetch('http://localhost:3001/api/ministerios').then(res => res.ok ? res.json() : []),
-      fetch('http://localhost:3001/api/funcoes').then(res => res.ok ? res.json() : []) // BUSCA AS FUNÇÕES
+      fetch('http://localhost:3001/api/funcoes').then(res => res.ok ? res.json() : [])
     ]).then(([dadosMembros, dadosMinisterios, dadosFuncoes]) => {
       setMembros(Array.isArray(dadosMembros) ? dadosMembros : []);
       setMinisterios(Array.isArray(dadosMinisterios) ? dadosMinisterios : []);
@@ -72,7 +72,7 @@ export default function Membros() {
         data_nascimento: formatDate(membro.data_nascimento),
         data_batismo: formatDate(membro.data_batismo),
         id_ministerio_principal: membro.id_ministerio_principal || '',
-        id_funcao_principal: membro.id_funcao_principal || '' // PREENCHE NA EDIÇÃO
+        id_funcao_principal: membro.id_funcao_principal || ''
       });
     } else if (type === 'movimentacoes') {
       fetchMovimentacoes(membro.id);

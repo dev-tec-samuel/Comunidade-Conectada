@@ -186,8 +186,6 @@ export default function Escalas() {
 
   return (
     <div className="text-slate-800 font-sans flex flex-col h-[calc(100vh-13rem)] w-full">
-      
-      {/* Cabeçalho do Calendário */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 shrink-0">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-bold capitalize text-slate-800 min-w-[200px]">
@@ -232,7 +230,6 @@ export default function Escalas() {
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex-1 flex flex-col">
-          {/* Dias da Semana */}
           <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200 shrink-0">
             {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
               <div key={day} className="py-3 text-center text-sm font-bold text-slate-500 uppercase tracking-wider border-r border-slate-200 last:border-r-0">
@@ -241,7 +238,6 @@ export default function Escalas() {
             ))}
           </div>
 
-          {/* Grid do Calendário */}
           <div className="grid grid-cols-7 grid-rows-6 bg-slate-200 gap-px flex-1 overflow-hidden">
             {calendarDays.map((date, idx) => {
               const dayEvents = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth() && ev.date.getDate() === date.getDate());
@@ -251,14 +247,12 @@ export default function Escalas() {
 
               return (
                 <div key={idx} className={`bg-white p-1.5 flex flex-col transition-colors overflow-hidden h-full ${!isCurrentMonth ? 'bg-slate-50 opacity-75' : 'hover:bg-slate-50'}`}>
-                  {/* Número do Dia */}
                   <div className="flex justify-between items-start mb-1 shrink-0 px-1">
                     <span className={`text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full ${isToday ? 'bg-orange-500 text-white shadow-sm' : isCurrentMonth ? 'text-slate-700' : 'text-slate-400'}`}>
                       {date.getDate()}
                     </span>
                   </div>
 
-                  {/* LÓGICA ATUALIZADA: Estilo "Pill" (Etiqueta de linha única, sem bordas pesadas) */}
                   <div className="flex flex-col gap-1 flex-1 overflow-y-auto pr-0.5 custom-scrollbar mt-1">
                     {dayEvents.map(ev => (
                       <div 
@@ -269,7 +263,7 @@ export default function Escalas() {
                             ? 'bg-slate-50 border border-dashed border-slate-300 text-slate-500 hover:bg-white hover:border-orange-400 hover:text-orange-600' 
                             : 'bg-orange-100 text-orange-800 hover:bg-orange-200'
                         }`}
-                        title={`${ev.time} - ${ev.title}`} // Ao passar o rato por cima, mostra o nome completo caso corte
+                        title={`${ev.time} - ${ev.title}`}
                       >
                         <span className={`text-[10px] font-bold shrink-0 ${ev.scales.length === 0 ? 'text-slate-400' : 'text-orange-600'}`}>
                           {ev.time}
@@ -287,7 +281,6 @@ export default function Escalas() {
         </div>
       )}
 
-      {/* MODAL: VISUALIZAR ESCALA */}
       {selectedEvent && (
         <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
@@ -328,7 +321,6 @@ export default function Escalas() {
         </div>
       )}
 
-      {/* MODAL: CRIAR / EDITAR NOVA ESCALA */}
       {isNewModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">

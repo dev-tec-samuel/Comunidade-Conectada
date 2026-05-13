@@ -4,17 +4,15 @@ import Modal from '../components/Modal';
 
 export default function Eventos() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState('add'); // 'add', 'edit', 'view'
+  const [modalType, setModalType] = useState('add');
   const [eventos, setEventos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [membros, setMembros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvento, setSelectedEvento] = useState(null);
 
-  // Estado para o arquivo físico da imagem
   const [capaFile, setCapaFile] = useState(null);
 
-  // Estado do Formulário
   const initialFormState = {
     titulo: '',
     descricao: '',
@@ -24,7 +22,7 @@ export default function Eventos() {
     id_categoria: '',
     id_responsavel: '',
     imagem_capa_url: '',
-    destaque_mural: false // Define se aparece no mural ou apenas nas escalas
+    destaque_mural: false
   };
   const [formData, setFormData] = useState(initialFormState);
 
@@ -98,7 +96,6 @@ export default function Eventos() {
     
     const data_inicio = `${formData.data}T${formData.hora}:00`;
 
-    // Envio via FormData para suportar o arquivo da imagem
     const payload = new FormData();
     payload.append('titulo', formData.titulo);
     payload.append('descricao', formData.descricao);
@@ -120,7 +117,7 @@ export default function Eventos() {
 
     fetch(url, {
       method: method,
-      body: payload // O browser define o Content-Type automaticamente
+      body: payload
     })
     .then(res => {
       if (!res.ok) throw new Error("Erro na requisição");
@@ -164,7 +161,6 @@ export default function Eventos() {
         </button>
       </div>
 
-      {/* Filtramos para exibir apenas o que é DESTAQUE no Mural */}
       {eventos.filter(ev => ev.destaque_mural === true).length === 0 ? (
         <div className="bg-white p-12 rounded-2xl border-2 border-dashed border-gray-200 text-center">
           <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -318,7 +314,6 @@ export default function Eventos() {
               <input type="text" name="local" value={formData.local} onChange={handleInputChange} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-orange-500" />
             </div>
 
-            {/* Configuração de Destaque no Mural */}
             <div className="flex items-center gap-3 p-4 bg-orange-50 border border-orange-100 rounded-xl">
               <input 
                 type="checkbox" 

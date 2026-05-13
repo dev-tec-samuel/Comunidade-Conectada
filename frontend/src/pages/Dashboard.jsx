@@ -8,9 +8,7 @@ export default function Dashboard({ setCurrentScreen }) {
   });
   const [aniversariantes, setAniversariantes] = useState([]);
 
-  // Busca os dados assim que a tela abre
   useEffect(() => {
-    // Busca Totais
     fetch('http://localhost:3001/api/dashboard')
       .then(res => res.ok ? res.json() : null)
       .then(data => {
@@ -18,7 +16,6 @@ export default function Dashboard({ setCurrentScreen }) {
       })
       .catch(err => console.error("Erro ao buscar dados do dashboard:", err));
 
-    // Busca Aniversariantes do Mês (Simulando a chamada da sua View VW_ANIVERSARIANTES_MES)
     fetch('http://localhost:3001/api/aniversariantes')
       .then(res => res.ok ? res.json() : [])
       .then(data => {

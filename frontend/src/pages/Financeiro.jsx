@@ -1,14 +1,11 @@
 import { DollarSign, List, Plus, TrendingDown, TrendingUp, Wallet, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-// Importações do Chart.js
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
-// Registar os elementos do gráfico
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Componente Modal embutido para evitar erros de importação
 const Modal = ({ isOpen, onClose, title, children, maxWidth = "max-w-2xl" }) => {
   if (!isOpen) return null;
   return (
@@ -34,22 +31,19 @@ export default function Financeiro() {
   const [modalMovimentacoesOpen, setModalMovimentacoesOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   
-  // Estados de Dados
   const [resumo, setResumo] = useState({ mes: {}, saldo_geral: 0 });
   const [registros, setRegistros] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [membros, setMembros] = useState([]);
   
-  // Estados para os Gráficos
   const [graficoEntradas, setGraficoEntradas] = useState([]);
   const [graficoSaidas, setGraficoSaidas] = useState([]);
 
-  // Estado do Formulário
   const initialForm = {
     tipo: 'Entrada',
     id_categoria: '',
     valor: '',
-    data_lancamento: new Date().toISOString().split('T')[0], // Hoje como padrão
+    data_lancamento: new Date().toISOString().split('T')[0],
     id_membro: '',
     descricao: ''
   };
@@ -134,16 +128,15 @@ export default function Financeiro() {
 
   const categoriasFiltradas = categorias.filter(c => c.tipo === formData.tipo);
 
-  // --- CONFIGURAÇÃO DOS GRÁFICOS (Elegância e UI Premium) ---
   const dataEntradas = {
     labels: graficoEntradas.map(g => g.categoria),
     datasets: [{
       data: graficoEntradas.map(g => g.total),
       backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#06b6d4'],
-      borderWidth: 4,               // Aumenta o espaço em branco entre as fatias
-      borderColor: '#ffffff',       // Cor da borda que cria o espaçamento
-      hoverOffset: 8,               // Efeito de sobressair a fatia ao passar o rato
-      borderRadius: 6               // Pontas das fatias ligeiramente arredondadas
+      borderWidth: 4, 
+      borderColor: '#ffffff',
+      hoverOffset: 8,
+      borderRadius: 6
     }]
   };
 
@@ -160,15 +153,15 @@ export default function Financeiro() {
   };
 
   const chartOptions = {
-    cutout: '80%', // Rosca mais fina, deixando um "buraco" maior para colocar o texto no meio
+    cutout: '80%',
     layout: {
-      padding: 10 // Previne que o hover corte as bordas do gráfico
+      padding: 10
     },
     plugins: {
       legend: { 
         position: 'bottom', 
         labels: { 
-          usePointStyle: true, // Bolinhas em vez de quadrados na legenda
+          usePointStyle: true,
           boxWidth: 8,
           padding: 20,
           color: '#64748b',
@@ -176,13 +169,12 @@ export default function Financeiro() {
         } 
       },
       tooltip: {
-        backgroundColor: '#1e293b', // Caixa de info mais escura
+        backgroundColor: '#1e293b',
         padding: 12,
         titleFont: { family: "'Inter', sans-serif", size: 13 },
         bodyFont: { family: "'Inter', sans-serif", size: 14, weight: 'bold' },
         usePointStyle: true,
         callbacks: {
-          // Formata o valor dentro da caixa de tooltip para moeda local
           label: function(context) {
             let label = context.label || '';
             if (label) { label += ': '; }
@@ -200,7 +192,7 @@ export default function Financeiro() {
   return (
     <div className="animate-in fade-in duration-500 font-sans text-slate-800">
       
-      {/* Cabeçalho e Botões */}
+      {}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800"></h2>
@@ -216,9 +208,7 @@ export default function Financeiro() {
         </div>
       </div>
 
-      {/* Grid de Cards de Resumo */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-        {/* CARD: SALDO GERAL (Destaque) */}
         <div className="bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-700 relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4">
             <Wallet size={100} className="text-white" />
@@ -231,7 +221,6 @@ export default function Financeiro() {
           </div>
         </div>
 
-        {/* CARD: ENTRADAS DO MÊS */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center">
           <div className="flex items-center gap-2 mb-1">
             <div className="p-1.5 bg-green-100 text-green-600 rounded-lg"><TrendingUp size={16} /></div>
@@ -240,7 +229,6 @@ export default function Financeiro() {
           <p className="text-2xl font-black text-slate-800">{formatarMoeda(resumo.mes.total_entradas)}</p>
         </div>
 
-        {/* CARD: SAÍDAS DO MÊS */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center">
           <div className="flex items-center gap-2 mb-1">
             <div className="p-1.5 bg-red-100 text-red-600 rounded-lg"><TrendingDown size={16} /></div>
@@ -249,7 +237,6 @@ export default function Financeiro() {
           <p className="text-2xl font-black text-slate-800">{formatarMoeda(resumo.mes.total_saidas)}</p>
         </div>
 
-        {/* CARD: SALDO DO MÊS */}
         <div className={`p-6 rounded-2xl shadow-sm border flex flex-col justify-center ${Number(resumo.mes.saldo_atual) >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
           <div className="flex items-center gap-2 mb-1">
             <div className={`p-1.5 rounded-lg ${Number(resumo.mes.saldo_atual) >= 0 ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'}`}><DollarSign size={16} /></div>
@@ -261,17 +248,13 @@ export default function Financeiro() {
         </div>
       </div>
 
-      {/* SECÇÃO DOS GRÁFICOS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Gráfico de Entradas */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
           <h3 className="text-lg font-bold text-slate-800 mb-6">Origem das Entradas (Mês)</h3>
           <div className="flex-1 flex items-center justify-center min-h-[280px]">
             {graficoEntradas.length > 0 ? (
               <div className="relative w-full h-72 flex items-center justify-center">
                 <Doughnut data={dataEntradas} options={chartOptions} />
-                {/* Texto centralizado dentro do gráfico */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-20px]">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
                   <span className="text-xl font-black text-slate-800">{formatarMoeda(resumo.mes.total_entradas)}</span>
@@ -283,14 +266,12 @@ export default function Financeiro() {
           </div>
         </div>
 
-        {/* Gráfico de Saídas */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
           <h3 className="text-lg font-bold text-slate-800 mb-6">Destino das Saídas (Mês)</h3>
           <div className="flex-1 flex items-center justify-center min-h-[280px]">
             {graficoSaidas.length > 0 ? (
               <div className="relative w-full h-72 flex items-center justify-center">
                 <Doughnut data={dataSaidas} options={chartOptions} />
-                {/* Texto centralizado dentro do gráfico */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-20px]">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
                   <span className="text-xl font-black text-slate-800">{formatarMoeda(resumo.mes.total_saidas)}</span>
@@ -304,7 +285,6 @@ export default function Financeiro() {
 
       </div>
 
-      {/* MODAL: VER MOVIMENTAÇÕES (TABELA) */}
       <Modal isOpen={modalMovimentacoesOpen} onClose={() => setModalMovimentacoesOpen(false)} title="Movimentações do Mês" maxWidth="max-w-4xl">
         <div className="overflow-x-auto rounded-xl border border-slate-100 mb-4">
            <table className="w-full table-auto text-left">
@@ -356,11 +336,8 @@ export default function Financeiro() {
         </div>
       </Modal>
 
-      {/* MODAL: NOVO LANÇAMENTO */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Registrar Lançamento" maxWidth="max-w-lg">
         <form id="financeForm" onSubmit={handleSave} className="space-y-5">
-          
-          {/* Tipo (Entrada/Saída) */}
           <div className="flex gap-4 p-1 bg-slate-100 rounded-xl mb-4">
             <button type="button" onClick={() => setFormData({...formData, tipo: 'Entrada', id_categoria: ''})} className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${formData.tipo === 'Entrada' ? 'bg-white text-green-600 shadow-sm' : 'text-slate-500 hover:bg-slate-200'}`}>
               Receita (Entrada)
